@@ -1,20 +1,14 @@
 <?php
 
-use Silex\Application;
-use Silex\Provider\AssetServiceProvider;
-use Silex\Provider\TwigServiceProvider;
-use Silex\Provider\ServiceControllerServiceProvider;
-use Silex\Provider\HttpFragmentServiceProvider;
+use Symfony\Component\HttpFoundation\Response;
 
-$app = new Application();
-$app->register(new ServiceControllerServiceProvider());
-$app->register(new AssetServiceProvider());
-$app->register(new TwigServiceProvider());
-$app->register(new HttpFragmentServiceProvider());
-$app['twig'] = $app->extend('twig', function ($twig, $app) {
-    // add custom globals, filters, tags, ...
+require __DIR__ . '/../vendor/autoload.php';
 
-    return $twig;
+$app = new Silex\Application();
+$app['debug'] = true;
+
+$app->match('/', function () {
+    return new Response('Ceci est ma première page.');
 });
 
-return $app;
+$app->run();
