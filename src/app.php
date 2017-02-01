@@ -4,34 +4,21 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/services/Template.php';
 
 $app = new Silex\Application();
 $app['debug'] = true;
 
-$app->get('/', function () {
-    return new Response(getContent());
+$app['service.template'] = function () {
+    return new Template();
+};
+
+$app->get('/', function () use ($app) {
+    return new Response($app['service.template']->getContent());
 });
 
-$app->post('/submit', function (Request $request) {
-    return new Response(postContent($request->request));
+$app->post('/submit', function (Request $request) use ($app) {
+    return new Response($app['service.template']->postContent($request->request));
 });
-
-function getContent() {
-    $template = <<<EOF
-<form method="post" action="app.php/submit">
-    <input name="name" placeholder="Votre nom">
-    <button type="submit">Envoyer</button>
-</form>
-EOF;
-
-    return $template;
-
-}
-
-function postContent($request) {
-    $name = $request->get('name');
-
-    return sprintf('Bonjour %s', $name);
-}
 
 $app->run();
