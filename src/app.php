@@ -13,12 +13,16 @@ $app['service.template'] = function () {
     return new Template();
 };
 
+$app->register(new Silex\Provider\TwigServiceProvider(), array(
+    'twig.path' => __DIR__ . '/views',
+));
+
 $app->get('/', function () use ($app) {
-    return new Response($app['service.template']->getContent());
+    return $app['twig']->render('get.html.twig');
 });
 
 $app->post('/submit', function (Request $request) use ($app) {
-    return new Response($app['service.template']->postContent($request->request));
+    return $app['twig']->render('post.html.twig', $request->request->all());
 });
 
 $app->run();
